@@ -43,12 +43,14 @@ func child() {
 	// Setting up hostname
 	syscall.Sethostname([]byte("container"))
 
-	// Mount proc before changing root
-	must(syscall.Mount("proc", "/mycontainerroot/proc", "proc", 0, ""))
+	// Mount pseudo filesystems : kernel for the user and user space to share info
+	// Mount dir asproc pseudo filesystem so that kernel knows i'm going to populate
+	// that with all the information about these running processes
+	syscall.Mount("proc", "/mycontainerroot/proc", "proc", 0, "")
 
 	// Setting root directory(my own /proc)
-	must(syscall.Chroot("/mycontainerroot"))
-	must(syscall.Chdir("/"))
+	syscall.Chroot("/mycontainerroot")
+	syscall.Chdir("/")
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin = os.Stdin
@@ -56,6 +58,8 @@ func child() {
 	cmd.Stderr = os.Stderr
 
 	cmd.Run()
+
+	syscall.Unmount("/proc", 0)
 }
 
 func must(err error) {
