@@ -41,7 +41,7 @@ func child() {
 	fmt.Printf("Running %v\n", os.Args[2:])
 
 	// Setting up hostname
-	syscall.sethostname([]byte("container"))
+	syscall.Sethostname([]byte("container"))
 
 	cmd := exec.Command(os.Args[2], os.Args[3:]...)
 	cmd.Stdin = os.Stdin
