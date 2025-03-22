@@ -67,7 +67,7 @@ func child() {
 	syscall.Unmount("/proc", 0)
 }
 
-// limiting the number of (caping memory)
+// limiting the number of processes (caping memory)
 func cg() {
 	cgroups := "/sys/fs/cgroup"
 	pids := filepath.Join(cgroups, "pids")
